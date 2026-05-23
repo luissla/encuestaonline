@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encuesta de Opinión - Curso Antigravity</title>
+    <meta name="description" content="Encuesta de opinión para estudiantes del curso Antigravity. Evalúa satisfacción, claridad del contenido y aplicabilidad práctica.">
+    <!-- Google Fonts: Outfit for tech headers, Inter for clean body text -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome for high-tech icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Background glowing accents -->
+    <div class="glow-orb glow-orb-red"></div>
+    <div class="glow-orb glow-orb-yellow"></div>
+
+    <header class="main-header">
+        <div class="container header-container">
+            <div class="logo">
+                <span class="logo-icon"><i class="fa-solid fa-square-poll-vertical"></i></span>
+                <h1 class="logo-text">ANTI<span class="highlight-red">GRAVITY</span><span class="logo-sub">STUDENT HUB</span></h1>
+            </div>
+            <nav class="nav-tabs">
+                <button id="btn-show-survey" class="nav-btn active" onclick="switchTab('survey')">
+                    <i class="fa-solid fa-pen-to-square"></i> Encuesta
+                </button>
+                <button id="btn-show-dashboard" class="nav-btn" onclick="tryOpenDashboard()">
+                    <i class="fa-solid fa-chart-line"></i> Panel de Control
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container main-content">
+        <!-- Survey View -->
+        <section id="section-survey" class="tab-content active">
+            <div class="card intro-card">
+                <span class="badge badge-yellow">FEEDBACK</span>
+                <h2>Tu opinión hace la diferencia</h2>
+                <p>Ayúdanos a mejorar la experiencia del curso <strong>Antigravity</strong>. Esta encuesta es totalmente anónima pero necesitamos tu identificador único de estudiante para registrar la participación. Tardarás menos de 2 minutos.</p>
+            </div>
+
+            <form id="survey-form" class="card survey-card" onsubmit="handleFormSubmit(event)">
+                
+                <!-- Student ID Field -->
+                <div class="form-group">
+                    <label for="id_estudiante" class="form-label">
+                        <span class="label-number">01</span> Identificador del Estudiante
+                        <span class="required">*</span>
+                    </label>
+                    <p class="field-desc">Introduce tu identificador único de alumno (ej. EST-2026-99)</p>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-user input-icon"></i>
+                        <input 
+                            type="text" 
+                            id="id_estudiante" 
+                            name="id_estudiante" 
+                            class="form-control" 
+                            placeholder="Introduce tu ID de estudiante" 
+                            required
+                        >
+                    </div>
+                    <span class="error-msg" id="error-id-estudiante"></span>
+                </div>
+
+                <!-- Satisfaction Rating Scale (1-5) -->
+                <div class="form-group scale-group">
+                    <label class="form-label">
+                        <span class="label-number">02</span> Nivel de Satisfacción General
+                        <span class="required">*</span>
+                    </label>
+                    <p class="field-desc">¿Qué tan satisfecho estás con el curso de Antigravity en general?</p>
+                    
+                    <div class="rating-container">
+                        <div class="scale-labels">
+                            <span class="label-extreme font-red">Muy Insatisfecho</span>
+                            <span class="label-extreme font-yellow">Muy Satisfecho</span>
+                        </div>
+                        <div class="rating-options">
+                            <label class="rating-option">
+                                <input type="radio" name="nivel_satisfaccion" value="1" required>
+                                <span class="rating-box">1</span>
+                            </label>
+                            <label class="rating-option">
+                                <input type="radio" name="nivel_satisfaccion" value="2">
+                                <span class="rating-box">2</span>
+                            </label>
+                            <label class="rating-option">
+                                <input type="radio" name="nivel_satisfaccion" value="3">
+                                <span class="rating-box">3</span>
+                            </label>
+                            <label class="rating-option">
+                                <input type="radio" name="nivel_satisfaccion" value="4">
+                                <span class="rating-box">4</span>
+                            </label>
+                            <label class="rating-option">
+                                <input type="radio" name="nivel_satisfaccion" value="5">
+                                <span class="rating-box">5</span>
+                            </label>
+                        </div>
+                    </div>
+                    <span class="error-msg" id="error-satisfaccion"></span>
+                </div>
+
+                <!-- Clarity of Content Scale (1-5) -->
+                <div class="form-group scale-group">
+                    <label class="form-label">
+                        <span class="label-number">03</span> Claridad de los Contenidos
+                        <span class="required">*</span>
+                    </label>
+                    <p class="field-desc">¿Cómo evalúas la claridad con la que se presentaron los conceptos técnicos?</p>
+                    
+                    <div class="rating-container">
+                        <div class="scale-labels">
+                            <span class="label-extreme font-red">Muy poco claro</span>
+                            <span class="label-extreme font-yellow">Muy claro</span>
+                        </div>
+                        <div class="rating-options">
+                            <label class="rating-option">
+                                <input type="radio" name="claridad_contenido" value="1" required>
+                                <span class="rating-box">1</span>
+                            </label>
+                            <label class="rating-option">
+                                <input type="radio" name="claridad_contenido" value="2">
+                                <span class="rating-box">2</span>
+                            </label>
+                            <label class="rating-option">
+                                <input type="radio" name="claridad_contenido" value="3">
+                                <span class="rating-box">3</span>
+                            </label>
+                            <label class="rating-option">
+                                <input type="radio" name="claridad_contenido" value="4">
+                                <span class="rating-box">4</span>
+                            </label>
+                            <label class="rating-option">
+                                <input type="radio" name="claridad_contenido" value="5">
+                                <span class="rating-box">5</span>
+                            </label>
+                        </div>
+                    </div>
+                    <span class="error-msg" id="error-claridad"></span>
+                </div>
+
+                <!-- Practical Applicability Scale (1-5) -->
+                <div class="form-group scale-group">
+                    <label class="form-label">
+                        <span class="label-number">04</span> Aplicabilidad Práctica
+                        <span class="required">*</span>
+                    </label>
+                    <p class="field-desc">¿Consideras que lo aprendido es aplicable a tus proyectos o carrera profesional?</p>
+                    
+                    <div class="rating-container">
+                        <div class="scale-labels">
+                            <span class="label-extreme font-red">Nada aplicable</span>
+                            <span class="label-extreme font-yellow">Muy aplicable</span>
+                        </div>
+                        <div class="rating-options">
+                            <label class="rating-option">
+                                <input type="radio" name="aplicabilidad_practica" value="1" required>
+                                <span class="rating-box">1</span>
+                            </label>
+                            <label class="rating-option">
+                                <input type="radio" name="aplicabilidad_practica" value="2">
+                                <span class="rating-box">2</span>
+                            </label>
+                            <label class="rating-option">
+                                <input type="radio" name="aplicabilidad_practica" value="3">
+                                <span class="rating-box">3</span>
+                            </label>
+                            <label class="rating-option">
+                                <input type="radio" name="aplicabilidad_practica" value="4">
+                                <span class="rating-box">4</span>
+                            </label>
+                            <label class="rating-option">
+                                <input type="radio" name="aplicabilidad_practica" value="5">
+                                <span class="rating-box">5</span>
+                            </label>
+                        </div>
+                    </div>
+                    <span class="error-msg" id="error-aplicabilidad"></span>
+                </div>
+
+                <!-- Additional Comments Field -->
+                <div class="form-group">
+                    <label for="comentarios_adicionales" class="form-label">
+                        <span class="label-number">05</span> Comentarios Adicionales
+                    </label>
+                    <p class="field-desc">Comparte tus sugerencias, críticas o qué fue lo que más te gustó del curso.</p>
+                    <div class="textarea-wrapper">
+                        <textarea 
+                            id="comentarios_adicionales" 
+                            name="comentarios_adicionales" 
+                            class="form-control text-area" 
+                            rows="4" 
+                            placeholder="Escribe aquí tus comentarios u opiniones libres..."
+                            maxlength="500"
+                            oninput="updateCharCount(this)"
+                        ></textarea>
+                        <div class="char-counter"><span id="char-current">0</span>/500</div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="resetSurveyForm()">
+                        <i class="fa-solid fa-trash-can"></i> Limpiar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Enviar Encuesta <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Teacher Dashboard View -->
+        <section id="section-dashboard" class="tab-content">
+            <!-- Secure Configuration Settings Panel (Only visible after login) -->
+            <div class="card settings-card" style="margin-bottom: 25px; border: 1px solid rgba(255, 201, 60, 0.2); background: rgba(18, 18, 23, 0.6); backdrop-filter: blur(10px);">
+                <div class="settings-header" onclick="toggleSettingsDrawer()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 5px 0;">
+                    <h3 style="margin: 0; font-family: 'Outfit', sans-serif; font-size: 16px; color: var(--color-text-white); display: flex; align-items: center; gap: 10px;">
+                        <i class="fa-solid fa-sliders" style="color: var(--color-accent-yellow);"></i> Ajustes de Conexión de Base de Datos
+                    </h3>
+                    <span id="settings-toggle-icon" style="color: var(--color-text-muted); transition: transform 0.3s;"><i class="fa-solid fa-chevron-down"></i></span>
+                </div>
+                <div id="settings-drawer" class="settings-drawer" style="display: none; margin-top: 20px; border-top: 1px solid var(--color-border); padding-top: 20px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="cfg-airtable-base" class="form-label" style="font-size: 12px;">Airtable Base ID</label>
+                            <input type="text" id="cfg-airtable-base" class="form-control" placeholder="appJZVrv..." style="padding: 10px; font-size: 13px;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="cfg-airtable-table" class="form-label" style="font-size: 12px;">Airtable Table ID/Name</label>
+                            <input type="text" id="cfg-airtable-table" class="form-control" placeholder="tblR2zg..." style="padding: 10px; font-size: 13px;">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 15px; margin-bottom: 0;">
+                        <label for="cfg-airtable-token" class="form-label" style="font-size: 12px;">Airtable Personal Access Token (PAT)</label>
+                        <input type="password" id="cfg-airtable-token" class="form-control" placeholder="patSxI0oq..." style="padding: 10px; font-size: 13px;">
+                    </div>
+                    <div class="form-group" style="margin-top: 15px; margin-bottom: 0;">
+                        <label for="cfg-n8n-webhook" class="form-label" style="font-size: 12px;">n8n Webhook URL</label>
+                        <input type="text" id="cfg-n8n-webhook" class="form-control" placeholder="https://n8n..." style="padding: 10px; font-size: 13px;">
+                    </div>
+                    <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap;">
+                        <button class="btn btn-secondary" onclick="resetSettingsToDefault()" style="padding: 8px 15px; font-size: 12px; border-radius: 4px;">
+                            <i class="fa-solid fa-rotate-left"></i> Valores de Fábrica
+                        </button>
+                        <button class="btn btn-primary" onclick="saveSettings()" style="padding: 8px 15px; font-size: 12px; border-radius: 4px; background: var(--color-accent-yellow); border-color: var(--color-accent-yellow); color: #08080b;">
+                            <i class="fa-solid fa-floppy-disk"></i> Guardar Ajustes
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats overview cards grid -->
+            <div class="stats-grid">
+                <div class="card stat-card border-left-yellow">
+                    <div class="stat-icon yellow"><i class="fa-solid fa-users"></i></div>
+                    <div class="stat-info-wrap">
+                        <span class="stat-title">Total Respuestas</span>
+                        <span id="stat-total-responses" class="stat-value">0</span>
+                    </div>
+                </div>
+                <div class="card stat-card border-left-red">
+                    <div class="stat-icon red"><i class="fa-solid fa-heart"></i></div>
+                    <div class="stat-info-wrap">
+                        <span class="stat-title">Satis. Promedio</span>
+                        <span id="stat-avg-satisfaction" class="stat-value">0.0</span>
+                    </div>
+                </div>
+                <div class="card stat-card border-left-yellow">
+                    <div class="stat-icon yellow"><i class="fa-solid fa-lightbulb"></i></div>
+                    <div class="stat-info-wrap">
+                        <span class="stat-title">Claridad Promedio</span>
+                        <span id="stat-avg-clarity" class="stat-value">0.0</span>
+                    </div>
+                </div>
+                <div class="card stat-card border-left-red">
+                    <div class="stat-icon red"><i class="fa-solid fa-toolbox"></i></div>
+                    <div class="stat-info-wrap">
+                        <span class="stat-title">Aplicabilidad Prom.</span>
+                        <span id="stat-avg-applicability" class="stat-value">0.0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats visualization charts -->
+            <div class="charts-container">
+                <div class="card chart-card">
+                    <h3>Visualización de Métricas del Curso</h3>
+                    <p class="chart-subtitle">Promedio de valoraciones en escala de 1 a 5</p>
+                    
+                    <div class="custom-chart-bar-group">
+                        <div class="chart-bar-header">
+                            <span>Satisfacción General</span>
+                            <span id="chart-val-satisfaction">0.0 / 5.0</span>
+                        </div>
+                        <div class="progress-track">
+                            <div id="progress-bar-satisfaction" class="progress-bar bg-gradient-red" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="custom-chart-bar-group">
+                        <div class="chart-bar-header">
+                            <span>Claridad de Contenido</span>
+                            <span id="chart-val-clarity">0.0 / 5.0</span>
+                        </div>
+                        <div class="progress-track">
+                            <div id="progress-bar-clarity" class="progress-bar bg-gradient-yellow" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="custom-chart-bar-group">
+                        <div class="chart-bar-header">
+                            <span>Aplicabilidad Práctica</span>
+                            <span id="chart-val-applicability">0.0 / 5.0</span>
+                        </div>
+                        <div class="progress-track">
+                            <div id="progress-bar-applicability" class="progress-bar bg-gradient-red" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Answers table -->
+            <div class="card table-card">
+                <div class="table-header">
+                    <h3>Respuestas Detalladas</h3>
+                    <div class="table-actions">
+                        <button class="btn btn-sm btn-secondary" onclick="exportDataJSON()">
+                            <i class="fa-solid fa-download"></i> Exportar JSON
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="downloadErrorLog()" style="background-color: rgba(255, 46, 99, 0.1); border-color: rgba(255, 46, 99, 0.3); color: var(--color-primary-red);">
+                            <i class="fa-solid fa-bug"></i> Descargar Log
+                        </button>
+                        <button class="btn btn-sm btn-secondary" onclick="clearAllData()">
+                            <i class="fa-solid fa-trash"></i> Borrar Todo
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Estudiante</th>
+                                <th>Satisfacción</th>
+                                <th>Claridad</th>
+                                <th>Aplicabilidad</th>
+                                <th>Comentarios</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody id="responses-table-body">
+                            <!-- Injected by JavaScript -->
+                            <tr class="empty-row">
+                                <td colspan="6">No se han registrado respuestas aún. ¡Sé el primero en enviar una!</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Secure Admin Authentication Modal Overlay -->
+    <div id="auth-overlay" class="modal-overlay">
+        <div class="modal-card">
+            <div class="success-icon-wrap" style="background: rgba(255, 46, 99, 0.1); border-color: rgba(255, 46, 99, 0.3);">
+                <i class="fa-solid fa-lock success-check-icon" style="color: var(--color-primary-red);"></i>
+            </div>
+            <h2>Acceso Restringido</h2>
+            <p>Por favor, introduce el PIN de seguridad docente para visualizar las métricas y respuestas.</p>
+            
+            <div class="form-group" style="margin-top: 20px; text-align: left;">
+                <label for="admin-pin" class="form-label">PIN de Seguridad</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-key input-icon"></i>
+                    <input type="password" id="admin-pin" class="form-control" placeholder="Introduce tu PIN" onkeydown="if(event.key === 'Enter') verifyAdminPIN()">
+                </div>
+                <span class="error-msg" id="error-auth" style="display: none; color: var(--color-primary-red); margin-top: 5px; font-size: 12px;"></span>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px; width: 100%;">
+                <button class="btn btn-secondary" onclick="closeAuthOverlay()" style="flex: 1; padding: 12px;">
+                    <i class="fa-solid fa-xmark"></i> Cancelar
+                </button>
+                <button class="btn btn-primary" onclick="verifyAdminPIN()" style="flex: 1; padding: 12px; background: var(--color-primary-red); border-color: var(--color-primary-red);">
+                    Acceder <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal Overlay -->
+    <div id="success-overlay" class="modal-overlay">
+        <div class="modal-card">
+            <div class="success-icon-wrap">
+                <i class="fa-solid fa-circle-check success-check-icon"></i>
+            </div>
+            <h2>¡Encuesta Registrada!</h2>
+            <p>Muchas gracias por ayudarnos a mejorar el curso Antigravity. Tu valoración ha sido guardada exitosamente en la base de datos local.</p>
+            
+            <div class="summary-receipt">
+                <h4>Resumen de tu respuesta:</h4>
+                <ul>
+                    <li><strong>ID Estudiante:</strong> <span id="summary-id"></span></li>
+                    <li><strong>Satisfacción:</strong> <span id="summary-sat"></span>/5</li>
+                    <li><strong>Claridad:</strong> <span id="summary-cla"></span>/5</li>
+                    <li><strong>Aplicabilidad:</strong> <span id="summary-app"></span>/5</li>
+                </ul>
+            </div>
+
+            <button class="btn btn-primary full-width" onclick="closeSuccessOverlay()">
+                Entendido <i class="fa-solid fa-thumbs-up"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Premium Footer -->
+    <footer class="main-footer">
+        <div class="container footer-container">
+            <p>&copy; 2026 Antigravity Academy. Desarrollado con tecnología de vanguardia.</p>
+            <p class="footer-meta">Diseño Web Premium • HTML5 • CSS3 • JS</p>
+        </div>
+    </footer>
+
+    <!-- Core JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>
