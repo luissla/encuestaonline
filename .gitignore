@@ -8,3 +8,8 @@ Desktop.ini
 
 # Logs
 error_log_antigravity.txt
+
+# Node / Environment
+node_modules/
+.env
+

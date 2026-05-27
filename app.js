@@ -3,15 +3,8 @@
  * Handles: Tab switching, Custom radio validations, LocalStorage, Dashboard stats, and JSON exports.
  */
 
-// --- SECURE OBFUSCATED CREDENTIALS & INTEGRATION ENGINE ---
-// Obfuscated default credentials to prevent basic scanner leaks in open repositories
-const _aBase = "appJZVrvXqvmHGogp";
-const _aTable = "tblR2zgLDitg4ny6k";
-const _aTokenPart1 = "patSxI0oqOvU0Lhr1";
-const _aTokenPart2 = "13f9446ff8976b5348bb1806f96dafde8d4d96dab428f41de62b272b28ec7ace";
-const _nWebPart1 = "https://n8n.srv1130039.hstgr.cloud";
-const _nWebPart2 = "/webhook-test/bf901bcb-f3e4-4469-ab82-3f5b11325b29";
-
+// --- SECURE INTEGRATION ENGINE ---
+// Default credentials are now managed securely by the backend proxy server to prevent leaks.
 // PIN de acceso docente para el Panel de Control
 const ADMIN_ACCESS_PIN = "Antigravity2026";
 let isAuthenticated = false; // Session-based state
@@ -19,13 +12,13 @@ let isAuthenticated = false; // Session-based state
 // Cooldown de envío para prevenir spam
 const SUBMISSION_COOLDOWN_MS = 5 * 60 * 1000; // 5 minutos
 
-// Load configuration values from LocalStorage if set by teacher, otherwise use obfuscated defaults
+// Load configuration values from LocalStorage if set by teacher, otherwise use secure defaults from backend proxy
 function getIntegrationConfig() {
     return {
-        baseId: localStorage.getItem('antigravity_cfg_base') || _aBase,
-        tableId: localStorage.getItem('antigravity_cfg_table') || _aTable,
-        token: localStorage.getItem('antigravity_cfg_token') || `${_aTokenPart1}.${_aTokenPart2}`,
-        n8nWebhook: localStorage.getItem('antigravity_cfg_webhook') || `${_nWebPart1}${_nWebPart2}`
+        baseId: localStorage.getItem('antigravity_cfg_base') || "DEFAULT",
+        tableId: localStorage.getItem('antigravity_cfg_table') || "DEFAULT",
+        token: localStorage.getItem('antigravity_cfg_token') || "DEFAULT",
+        n8nWebhook: localStorage.getItem('antigravity_cfg_webhook') || "DEFAULT"
     };
 }
 
@@ -108,12 +101,19 @@ function saveDataToStorage() {
 async function fetchAirtableResponses() {
     try {
         const config = getIntegrationConfig();
-        const url = `https://api.airtable.com/v0/${config.baseId}/${config.tableId}`;
-        const response = await fetch(url, {
-            headers: {
-                "Authorization": `Bearer ${config.token}`
-            }
-        });
+        const isDefault = (config.baseId === "DEFAULT");
+        
+        let response;
+        if (isDefault) {
+            response = await fetch('/api/responses');
+        } else {
+            const url = `https://api.airtable.com/v0/${config.baseId}/${config.tableId}`;
+            response = await fetch(url, {
+                headers: {
+                    "Authorization": `Bearer ${config.token}`
+                }
+            });
+        }
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -166,34 +166,47 @@ function formatAirtableDate(isoString) {
  * Send a new response record to Airtable
  */
 async function sendToAirtable(recordData) {
-    const payload = {
-        records: [
-            {
-                fields: {
-                    IDestudiante: recordData.id_estudiante,
-                    NivelSatisfaccion: recordData.nivel_satisfaccion,
-                    ClaridadContenido: recordData.claridad_contenido,
-                    AplicabilidadPractica: recordData.aplicabilidad_practica,
-                    ComentariosAdicionales: recordData.comentarios_adicionales
-                }
-            }
-        ]
-    };
-
     const config = getIntegrationConfig();
-    const url = `https://api.airtable.com/v0/${config.baseId}/${config.tableId}`;
-    const response = await fetch(url, {
-        method: "POST",
-        headers: {
-            "Authorization": `Bearer ${config.token}`,
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-    });
+    const isDefault = (config.baseId === "DEFAULT");
+    
+    let response;
+    if (isDefault) {
+        response = await fetch('/api/responses', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(recordData)
+        });
+    } else {
+        const payload = {
+            records: [
+                {
+                    fields: {
+                        IDestudiante: recordData.id_estudiante,
+                        NivelSatisfaccion: recordData.nivel_satisfaccion,
+                        ClaridadContenido: recordData.claridad_contenido,
+                        AplicabilidadPractica: recordData.aplicabilidad_practica,
+                        ComentariosAdicionales: recordData.comentarios_adicionales
+                    }
+                }
+            ]
+        };
+
+        const url = `https://api.airtable.com/v0/${config.baseId}/${config.tableId}`;
+        response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${config.token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(payload)
+        });
+    }
 
     if (!response.ok) {
         const errText = await response.text();
-        const errorMsg = `Airtable POST failed: ${response.status} - ${errText}`;
+        const errorMsg = `Airtable/Proxy POST failed: ${response.status} - ${errText}`;
         logError("Inserción de Respuesta en Airtable (sendToAirtable POST)", new Error(errorMsg));
         throw new Error(errorMsg);
     }
@@ -206,17 +219,30 @@ async function sendToAirtable(recordData) {
  */
 async function sendToN8N(recordData) {
     const config = getIntegrationConfig();
-    const response = await fetch(config.n8nWebhook, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(recordData)
-    });
+    const isDefault = (config.n8nWebhook === "DEFAULT");
+    
+    let response;
+    if (isDefault) {
+        response = await fetch('/api/n8n', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(recordData)
+        });
+    } else {
+        response = await fetch(config.n8nWebhook, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(recordData)
+        });
+    }
 
     if (!response.ok) {
         const errText = await response.text();
-        const errorMsg = `n8n Webhook POST failed: ${response.status} - ${errText}`;
+        const errorMsg = `n8n Webhook/Proxy POST failed: ${response.status} - ${errText}`;
         logError("Envío de Notificación a n8n (sendToN8N POST)", new Error(errorMsg));
         throw new Error(errorMsg);
     }
@@ -327,10 +353,10 @@ function toggleSettingsDrawer() {
  */
 function populateSettingsInputs() {
     const config = getIntegrationConfig();
-    document.getElementById('cfg-airtable-base').value = config.baseId === _aBase ? "" : config.baseId;
-    document.getElementById('cfg-airtable-table').value = config.tableId === _aTable ? "" : config.tableId;
-    document.getElementById('cfg-airtable-token').value = config.token === `${_aTokenPart1}.${_aTokenPart2}` ? "" : config.token;
-    document.getElementById('cfg-n8n-webhook').value = config.n8nWebhook === `${_nWebPart1}${_nWebPart2}` ? "" : config.n8nWebhook;
+    document.getElementById('cfg-airtable-base').value = config.baseId === "DEFAULT" ? "" : config.baseId;
+    document.getElementById('cfg-airtable-table').value = config.tableId === "DEFAULT" ? "" : config.tableId;
+    document.getElementById('cfg-airtable-token').value = config.token === "DEFAULT" ? "" : config.token;
+    document.getElementById('cfg-n8n-webhook').value = config.n8nWebhook === "DEFAULT" ? "" : config.n8nWebhook;
 }
 
 /**

@@ -1,0 +1,21 @@
+{
+  "name": "encuestaonline",
+  "version": "1.0.0",
+  "description": "Sistema de Encuestas Antigravity con backend proxy seguro",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "dotenv": "^16.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [],
+  "author": "Antigravity Academy",
+  "license": "ISC"
+}
